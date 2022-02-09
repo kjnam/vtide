@@ -13,7 +13,7 @@
       character*5 :: konco(nshallowparent) !todo: correct data type?
       real*8      :: coef(nshallowparent)
 
-      character*5, :: kon(nmaxall)
+      character*5 :: kon(nmaxall)
       real*8 V(nmaxall),U(nmaxall),F(nmaxall)
       integer    :: NJ(nmaxall)
       real*8  :: pi=4.d0*atan(1.d0)
