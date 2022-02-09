@@ -1,0 +1,6 @@
+# build
+build/**
+
+# VSCode
+.vscode/
+*.code-workspace
