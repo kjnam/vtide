@@ -1,6 +1,10 @@
 # build
-build/**
+build*/
 
 # VSCode
 .vscode/
 *.code-workspace
+
+# Output files
+*.out
+fort.*
