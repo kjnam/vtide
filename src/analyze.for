@@ -334,7 +334,7 @@ C*  DETERMINE THE CENTRAL HOUR OF THE ANALYSIS PERIOD AND SET UP THE
 C*  DEPENDENT AND INDEPENDENT VARIABLES, Y AND X.
 C
       lats=int(60.*(60.*(xlat-LATD)-LATM))
-      IF(ABS(xlat).LT.5.) xlat=SIGN(5.,xlat)
+      IF(ABS(xlat).LT.5.) xlat=SIGN(5.d0,xlat)
 c
 c actually, CUMHR=24.d0*(KD-KHM) (check), but keep same notation as before
 c

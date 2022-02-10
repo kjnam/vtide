@@ -99,7 +99,7 @@
       
       open(unit=lm,file=file_harmonics,action='write', status='unknown')
       write(lm,158) station_id,station_name,latd,latm,lond,lonm,mc_used,ndef,nloc,itrend
- 158  format('STATION #: ',I,/,'STATION NAME: ',A20,/,'LATITUDE:  '
+ 158  format('STATION #: ',I0,/,'STATION NAME: ',A20,/,'LATITUDE:  '
      2       ,2I3,/,'LONGITUDE: ',I4,I3,/,'# CONSTITUENTS:',i4,/,'# COMPONENTS:',i4,/,
      3       '# LOCATIONS:',i4,/,'TREND:',i4,1x,'(if present, trend coef is output as phase of Z0)')
       write(lm,159)"ANALYSIS START: ",ic1,iy1,"-",im1,"-",id1," ",itime(5,1),":",itime(6,1)
@@ -293,7 +293,7 @@ C*  DETERMINE THE CENTRAL HOUR OF THE ANALYSIS PERIOD AND SET UP THE
 C*  DEPENDENT AND INDEPENDENT VARIABLES, Y AND X.
 C
       write(LP,8) station_id,station_name,latd,latm,lond,lonm
-    8 format('STATION # ',I,', ',A20,' LATITUDE',2I3,', LONGITUDE',I4,I3)
+    8 format('STATION # ',I0,', ',A20,' LATITUDE',2I3,', LONGITUDE',I4,I3)
 
       write(LP,255)nobs
   255 format('NUMBER OF POINTS IN THE ANALYSIS =',I6)
