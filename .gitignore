@@ -1,3 +1,6 @@
+# Python
+__pycache__/
+
 # build
 build*/
 
@@ -8,3 +11,6 @@ build*/
 # Output files
 *.out
 fort.*
+
+# Tests
+test_*/
