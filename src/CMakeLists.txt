@@ -14,7 +14,9 @@ else ()
   message (FATAL_ERROR "Not supported compiler: ${CMAKE_Fortran_COMPILER_ID")
 endif()
 
-add_library(versatile_tide analyze.for astro_time.for constituents.for file_io.for predict.for svd.for write_output.for)
+add_library(versatile_tide analyze.for analyze_parameters.f90
+                           astro_time.for constituents.for
+                           file_io.for predict.for svd.for write_output.for)
 
 add_executable(vt_analyze analyze_driver.for)
 target_link_libraries(vt_analyze versatile_tide ${LAPACK_LIBRARIES})

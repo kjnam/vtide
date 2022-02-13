@@ -29,15 +29,11 @@
      &                      fitted,
      &                      istat)
 
-
+      use analyze_parameters
       use constituent
       use file_io
 
       implicit none
-      
-      integer, parameter :: mcc = 70         ! max allowed consituent estimates
-      integer, parameter :: nmaxp1 = mc*2
-      integer, parameter :: max_infer = 80
       
       integer,intent(in) :: nobs             !< number of observations
       integer,intent(in) :: itime(7,nobs)    !< obs times ... year,mon,day,hour,min,sec,century  !todo: this is silly

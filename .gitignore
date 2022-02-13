@@ -3,6 +3,7 @@ __pycache__/
 
 # build
 build*/
+*.mod
 
 # VSCode
 .vscode/

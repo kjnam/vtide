@@ -9,20 +9,13 @@
 !****************************************************************************
 
       program versatile_analyze
+      use analyze_parameters
       use file_io
       use constituent
 	implicit none
-	integer , parameter:: kin = 4      !< unit number for the main input file
       character(LEN=80)  :: main_file    
       character*4        :: time_zone
-      integer, parameter :: max_main_cnstnt = 80
-      integer, parameter :: max_infer = 80
-      
-      integer, parameter :: mcc = 70       !< max allowed consituent estimates
-      integer, parameter :: nmaxp1 = mc*2  !< dimension 'at least as great as the number of variables'
-    
-      
-      
+
       character*5,dimension(max_infer,16) :: infer_names
       real*8, dimension(max_infer,16)     :: infer_amp
       real*8, dimension(max_infer,16)     :: infer_zeta
