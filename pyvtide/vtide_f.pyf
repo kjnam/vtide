@@ -1,0 +1,165 @@
+python module vtide_f
+  interface
+    module analyze_parameters
+      implicit none
+      integer, parameter :: mc = 70
+      integer, parameter :: max_main_cnstnt = 80
+      integer, parameter :: max_infer = 80
+      integer, parameter :: mcc = 70
+      integer, parameter :: nmaxp1 = mc * 2
+    end module analyze_parameters
+    module file_io
+      character*80 :: file_analysis_out !  6
+      character*80 :: file_constituent_out !  6
+      character*80 :: file_analysis     !  7
+      character*80 :: file_const_db     !  8
+      character*80 :: file_obs          !  9
+      character*80 :: file_fitted_out       ! 25
+      subroutine vt_analysis_info(file_analysis, &
+                                  lat_degree, lat_min, &
+                                  lon_degree, lon_min, &
+                                  station_id, station_name, &
+                                  mf, ndef, itrend, nloc, &
+                                  cnstnt_names, &
+                                  freq_cycles, &
+                                  time_zone, &
+                                  nin, &
+                                  ninf, &
+                                  infer_main_const, &
+                                  infer_names, &
+                                  infer_freq, &
+                                  infer_amp, &
+                                  infer_zeta, &
+                                  id1,im1, iy1, id2, im2, iy2, ic1, ic2)
+        use analyze_parameters, only : max_main_cnstnt, max_infer
+        implicit none
+
+        integer, parameter :: KR1 = 10
+
+        character*80, intent(in) :: file_analysis
+        integer, intent(out) :: lat_degree
+        integer, intent(out) :: lat_min
+        integer, intent(out) :: lon_degree
+        integer, intent(out) :: lon_min
+        integer, intent(out) :: station_id
+        character*20, intent(out) :: station_name
+        integer, intent(out) :: mf
+        integer, intent(out) :: ndef
+        integer, intent(out) :: itrend
+        integer, intent(out) :: nloc
+        character*5, dimension(max_main_cnstnt), intent(out) :: cnstnt_names
+        real*8, dimension(max_main_cnstnt), intent(out) :: freq_cycles
+        character*4, intent(out) :: time_zone
+        integer, intent(out) :: nin
+        integer, dimension(max_infer), intent(out) :: ninf
+        character*5, dimension(max_infer), intent(out) :: infer_main_const
+        character*5, dimension(max_infer,16), intent(out) :: infer_names  !todo: dimension correctly
+        real*8, dimension(80,16), intent(out) :: infer_freq        ! legacy: used in report, but not in calcs
+        real*8, dimension(80,16), intent(out) :: infer_amp         !todo: hardwired size for these
+        real*8, dimension(80,16), intent(out) :: infer_zeta
+        integer, intent(out) :: id1, im1, iy1, id2, im2, iy2, ic1, ic2
+      end subroutine vt_analysis_info
+      subroutine vt_count_data(file_obs, ndef, nloc, nobs, &
+                               id1, im1, iy1, ic1, &
+                               id2, im2, iy2, ic2)
+        implicit none
+        character, dimension(80), intent(in, c) :: file_obs
+        integer, intent(in) :: ndef
+        integer, intent(in) :: nloc
+
+        integer, intent(out) :: nobs
+        integer, intent(in) :: id1, im1, iy1, ic1
+        integer, intent(in) :: id2, im2, iy2, ic2
+      end subroutine vt_count_data
+      subroutine vt_read_data(file_obs, ndef, nloc, &
+                              id1, im1, iy1, ic1, &
+                              id2, im2, iy2, ic2, &
+                              nobs, itime, obsdata &
+                              )
+        implicit none
+        character, dimension(80), intent(in, c) :: file_obs
+        integer, intent(in) :: ndef
+        integer, intent(in) :: nloc
+        integer, intent(in) :: id1, im1, iy1, ic1
+        integer, intent(in) :: id2, im2, iy2, ic2
+        integer, intent(in) :: nobs
+        integer, intent(out) :: itime(7, nobs)
+        real*8, intent(out) :: obsdata(nobs, ndef, nloc)
+      end subroutine vt_read_data
+    end module file_io
+    module constituent
+      implicit none
+      integer, parameter :: mc = 70, mc2 = mc * 2, nmaxall = 170, &
+                            nsatellite = 180, nshallowparent = 320
+      integer :: ntotal
+      integer :: ntidal
+      integer :: ii(mc2), jj(mc2), kk(mc2), ll(mc2), mm(mc2), nn(mc2)
+      integer :: nj(nmaxall)
+      real*8 :: semi(mc2)
+      real*8 ee(nsatellite), ph(nsatellite)
+      integer :: ldel(nsatellite), mdel(nsatellite)
+      integer :: ndel(nsatellite),ir(nsatellite)
+      character :: kon(nmaxall, 5)
+      character :: konco(nshallowparent, 5)
+      real*8 :: coef(nshallowparent)
+      character :: kontab(mc, 5)
+      real*8 :: freq(mc)
+      subroutine vt_read_constituent_db(name_constituent_db)
+        implicit none
+        character, intent(in, c) :: name_constituent_db(80)
+      end subroutine vt_read_constituent_db
+    end module constituent
+    subroutine vt_analyze(nobs,itime,obsdata,latd,latm,mf,ndef,itrend,nloc,&
+        name,freqc,ninfer_cnstnts,ninfer,infer_main_const,infer_names,&
+        infer_freq,infer_amp,infer_zeta,ampc,phg,ampci,phgi,amaj,amin,&
+        ainc,g,amaji,amini,ainci,gi,eigval,sig,cov,sdev,sdev0,ssq,rmsr,&
+        rmsr0,resmax,resmax_ls,iresmax,fitted,istat) ! in ../src/analyze.for
+        use analyze_parameters
+        use constituent
+        use file_io
+        integer, intent(in) :: nobs
+        integer, dimension(7,nobs),intent(in), depend(nobs) :: itime
+        real*8, dimension(nobs,ndef,nloc),intent(in),depend(nobs, ndef, nloc) :: obsdata
+        integer, intent(in) :: latd
+        integer, intent(in) :: latm
+        integer, intent(in) :: mf
+        integer, intent(in) :: ndef
+        integer, intent(in) :: itrend
+        integer, intent(in) :: nloc
+        character, dimension(*,5),intent(in,c) :: name
+        real*8, dimension(*),intent(in) :: freqc
+        integer, intent(in) :: ninfer_cnstnts
+        integer, dimension((max_infer)),intent(in) :: ninfer
+        character, dimension((max_infer),5),intent(in,c) :: infer_main_const
+        character, dimension((max_infer),16,5),intent(in,c) :: infer_names
+        real*8 dimension((max_infer),16),intent(in) :: infer_freq
+        real*8 dimension((max_infer),16),intent(in) :: infer_amp
+        real*8 dimension((max_infer),16),intent(in) :: infer_zeta
+        real*8 dimension((mcc),ndef,nloc),intent(out),depend(ndef,nloc) :: ampc
+        real*8 dimension((mcc),ndef,nloc),intent(out),depend(ndef,nloc) :: phg
+        real*8 dimension(10,10,ndef,nloc),intent(out),depend(ndef,nloc) :: ampci
+        real*8 dimension(10,10,ndef,nloc),intent(out),depend(ndef,nloc) :: phgi
+        real*8 dimension((mcc)),intent(out) :: amaj
+        real*8 dimension((mcc)),intent(out) :: amin
+        real*8 dimension((mcc)),intent(out) :: ainc
+        real*8 dimension((mcc)),intent(out) :: g
+        real*8 dimension(10,10),intent(out) :: amaji
+        real*8 dimension(10,10),intent(out) :: amini
+        real*8 dimension(10,10),intent(out) :: ainci
+        real*8 dimension(10,10),intent(out) :: gi
+        real*8 dimension((nmaxp1)),intent(out) :: eigval
+        real*8 dimension(4,(nmaxp1),ndef,nloc),intent(out),depend(ndef,nloc) :: sig
+        real*8 dimension(2*mf-1+itrend,2*mf-1+itrend),intent(out),depend(mf,itrend,mf,itrend) :: cov
+        real*8 dimension(ndef,nloc),intent(out),depend(ndef,nloc) :: sdev
+        real*8 dimension(ndef,nloc),intent(out),depend(ndef,nloc) :: sdev0
+        real*8 dimension(ndef,nloc),intent(out),depend(ndef,nloc) :: ssq
+        real*8 dimension(ndef,nloc),intent(out),depend(ndef,nloc) :: rmsr
+        real*8 dimension(ndef,nloc),intent(out),depend(ndef,nloc) :: rmsr0
+        real*8 dimension(ndef,nloc),intent(out),depend(ndef,nloc) :: resmax
+        real*8 dimension(ndef,nloc),intent(out),depend(ndef,nloc) :: resmax_ls
+        integer dimension(ndef,nloc),intent(out),depend(ndef,nloc) :: iresmax
+        real*8 dimension(nobs,ndef,nloc),intent(out),depend(nobs,ndef,nloc) :: fitted
+        integer intent(out) :: istat
+    end subroutine vt_analyze
+  end interface
+end python module vtide_f
